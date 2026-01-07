@@ -1,7 +1,7 @@
 """
 Scenario 3: High - Aggressive Renewable Penetration (Denmark)
 Mehta Method variant: Mean, CV, and Correlation evolve (as in your code)
-Generates hourly future prices for 2025-2032 and saves:
+Generates hourly future prices for 2025- still end of support and saves:
 1) Hourly time series (wind + price)
 2) Yearly stats (target vs realized)
 """
@@ -13,13 +13,13 @@ import numpy as np
 # CONFIG (repo-friendly paths: use relative paths inside your repo)
 # =============================================================================
 
-INPUT_FILE = "data/merged_wind_speed_direction_price_DK.csv"
+INPUT_FILE = "data/merged_wind_speed_direction_price_case_study.csv"
 
-OUTPUT_PRICES = "results/DK/EP/high/future_prices_scenario3_high_DK.csv"
-OUTPUT_STATS = "results/DK/EP/high/scenario3_high_stats_DK.csv"
+OUTPUT_PRICES = "results/DK/EP/high/future_prices_scenario_high_case_study.csv"
+OUTPUT_STATS = "results/DK/EP/high/scenario3_high_stats_case_study.csv"
 
-START_DATE = "2025-04-01"
-END_DATE = "2032-03-31 23:00"
+START_DATE = "end of historical data"
+END_DATE = "end of the support period"
 
 EXCLUDE_YEARS = [2022]
 RANDOM_SEED = 42
@@ -29,11 +29,11 @@ RANDOM_SEED = 42
 # =============================================================================
 
 # Starting point (your base)
-HISTORICAL_MEAN = 63.5
-HISTORICAL_CV = 0.81
-HISTORICAL_CORRELATION = -0.299
+HISTORICAL_MEAN = based on case study
+HISTORICAL_CV = based on case study
+HISTORICAL_CORRELATION = based on case study
 
-# Target by 2032 (high renewable scenario)
+# Target by end of support year (high renewable scenario)
 TARGET_MEAN_2032 = 40.0
 TARGET_CV_2032 = 1.0
 TARGET_CORRELATION_2032 = -0.75
