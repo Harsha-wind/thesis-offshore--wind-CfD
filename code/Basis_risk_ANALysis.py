@@ -1,9 +1,12 @@
+""" Basis Risk Anlysis for the referencing method used in Capability based CfD, flat average and the technology spcific reference
+This code is used for all case study just by adjusting the input file paths"""
+
 import pandas as pd
 import numpy as np
 
-print("="*60)
+
 print("TRACKING ERROR ANALYSIS: Capability-Based CfD")
-print("="*60)
+
 
 # ==============================================================================
 # 1. Load Hourly Data and Calculate Monthly Realized Price

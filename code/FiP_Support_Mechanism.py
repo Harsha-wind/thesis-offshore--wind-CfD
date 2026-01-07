@@ -1,3 +1,5 @@
+"""THis code gives the support payment calculation for FiP scheme used in Denmark just by changing the input files this code can be used for various electrictity price scenarios and also for the NL case study."""
+
 import pandas as pd
 from pathlib import Path
 

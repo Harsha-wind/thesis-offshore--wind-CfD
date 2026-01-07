@@ -4,14 +4,14 @@ Mehta Method: CV kept constant, Mean and Correlation evolve
 Generates hourly future prices for 2025-2032 and saves:
 1) Hourly time series (wind + price)
 2) Yearly stats (target vs realized)
+
+#For the NL case study, change the initial and realized parameters value and the end date
 """
 
 import pandas as pd
 import numpy as np
 
-# =============================================================================
-# CONFIG (repo-friendly paths: use relative paths inside your repo)
-# =============================================================================
+
 
 INPUT_FILE = "data/merged_wind_speed_direction_price_DK.csv"
 
@@ -24,9 +24,7 @@ END_DATE = "2032-03-31 23:00"
 EXCLUDE_YEARS = [2022]
 RANDOM_SEED = 42
 
-# =============================================================================
 # SCENARIO PARAMETERS (Mehta method: CV constant)
-# =============================================================================
 
 HISTORICAL_MEAN = 63.5
 HISTORICAL_CV = 0.81
@@ -36,9 +34,7 @@ TARGET_MEAN_2032 = 45.0
 TARGET_CV_2032 = 0.81
 TARGET_CORRELATION_2032 = -0.55
 
-# =============================================================================
-# STEP 1: LOAD HISTORICAL DATA
-# =============================================================================
+# LOAD HISTORICAL DATA
 
 df = pd.read_csv(INPUT_FILE)
 df["datetime"] = pd.to_datetime(df["datetime"])
@@ -53,9 +49,7 @@ missing = required_cols - set(df.columns)
 if missing:
     raise ValueError(f"Missing columns in input CSV: {sorted(missing)}")
 
-# =============================================================================
-# STEP 2: PREPARE FUTURE TIME SERIES (tile historical wind data)
-# =============================================================================
+# PREPARE FUTURE TIME SERIES (tile historical wind data)
 
 future_dates = pd.date_range(START_DATE, END_DATE, freq="h")
 n_hours = len(future_dates)
@@ -72,9 +66,7 @@ results["wind_speed_hub"] = future_wind
 results["wind_dir_deg"] = future_wind_dir
 results["spot_price_eur_per_mwh"] = np.nan
 
-# =============================================================================
-# STEP 3: YEARLY PARAMETER EVOLUTION (linear from 2025 to 2032)
-# =============================================================================
+# YEARLY PARAMETER EVOLUTION (linear from 2025 to 2032)
 
 years = range(future_dates.year.min(), future_dates.year.max() + 1)
 yearly_params = []
@@ -90,9 +82,8 @@ for year in years:
 
     yearly_params.append({"year": year, "mean": mean, "cv": cv, "std": std, "rho": rho})
 
-# =============================================================================
-# STEP 4: GENERATE PRICES (Mehta method)
-# =============================================================================
+# GENERATE PRICES (Mehta method)
+
 
 np.random.seed(RANDOM_SEED)
 yearly_stats = []
@@ -154,15 +145,11 @@ for params in yearly_params:
 
 stats_df = pd.DataFrame(yearly_stats)
 
-# =============================================================================
-# STEP 5: SAVE RESULTS
-# =============================================================================
+# SAVE RESULTS
 
 results.index.name = "datetime"
 results.to_csv(OUTPUT_PRICES)
 
 stats_df.to_csv(OUTPUT_STATS, index=False)
 
-print("Done.")
-print("Saved prices to:", OUTPUT_PRICES)
-print("Saved stats to:", OUTPUT_STATS)
+
