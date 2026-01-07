@@ -1,46 +1,50 @@
-#Support Payment for the Feed in Premium
 import pandas as pd
-import matplotlib.pyplot as plt
+from pathlib import Path
 
-# === USER CONFIGURATION ===
-strike_price = 103.1  # €/MWh
-input_path = "D:/Thesis_Project/thesis_data/results/DK/FiP/high/hourly_actual_generation_wake_DK_high.csv"
 
-# === Load data ===
-df = pd.read_csv(input_path, parse_dates=['hours'])
-df['hours'] = pd.to_datetime(df['hours'], dayfirst=True, errors='coerce')
+# USER INPUTS
 
-df.set_index('hours', inplace=True)
+STRIKE_PRICE = 103.1  # €/MWh # strike price for FiP scheme DK
 
-#Strip column names
+DATA_DIR = Path("thesis_data/results/DK/FiP/high")
+
+INPUT_FILE = DATA_DIR / "hourly_actual_generation_wake_DK_high.csv"
+OUTPUT_FILE = DATA_DIR / "support_payment_FiP_DK_high.csv"
+
+
+# LOAD DATA
+
+df = pd.read_csv(INPUT_FILE, parse_dates=["hours"])
+df["hours"] = pd.to_datetime(df["hours"], dayfirst=True, errors="coerce")
+df.set_index("hours", inplace=True)
+
 df.columns = df.columns.str.strip()
-# Rename columns for clarity
-for col in df.columns:
-    if 'Actual_Generation_MWh' in col:
-        df.rename(columns={col: 'ActualGeneration_MWh'}, inplace=True)
-for col in df.columns:
-    if 'SpotPrice/MWh' in col:
-        df.rename(columns={col: 'SpotPrice_€/MWh'}, inplace=True)
+
+df.rename(
+    columns={
+        col: "ActualGeneration_MWh"
+        for col in df.columns if "Actual_Generation_MWh" in col
+    },
+    inplace=True
+)
+
+df.rename(
+    columns={
+        col: "SpotPrice_€/MWh"
+        for col in df.columns if "SpotPrice/MWh" in col
+    },
+    inplace=True
+)
 
 
-# Support Payment Calculation
+# FiP SUPPORT PAYMENT CALCULATION
 
-df['SupportPayment_€'] = (strike_price - df['SpotPrice_€/MWh']) * df['ActualGeneration_MWh']
-# Spot price is negative, set support payment to zero
-df.loc[df['SpotPrice_€/MWh'] < 0, 'SupportPayment_€'] = 0
-#Spot price is greater than strike price, set support payment to zero
-df.loc[df['SpotPrice_€/MWh'] > strike_price, 'SupportPayment_€'] = 0
+df["SupportPayment_€"] = (
+    STRIKE_PRICE - df["SpotPrice_€/MWh"]
+) * df["ActualGeneration_MWh"]
 
-# View the index values 26021 to 26030, the rows values 26021 to 26030, and the columns
+df.loc[df["SpotPrice_€/MWh"] < 0, "SupportPayment_€"] = 0
+df.loc[df["SpotPrice_€/MWh"] > STRIKE_PRICE, "SupportPayment_€"] = 0
 
-print(df.iloc[2:10])
-print(df.columns)
-
-output_path = "D:/Thesis_Project/thesis_data/results/DK/FiP/high/support_payment_FiP_DK_high.csv"
-# Save the DataFrame to a new CSV file
-#the columns are datetime, ActualGeneration_MWh, SpotPrice_€/MWh, SupportPayment_€
-df.to_csv(output_path, index = True)      
-
-
-
-
+#output
+df.to_csv(OUTPUT_FILE)
