@@ -23,8 +23,7 @@ warnings.filterwarnings("ignore", message=".*NOJ model is not representative.*")
 
 
 
-# HELPER FUNCTIONS (same as analysis)
-
+# HELPER FUNCTIONS 
 
 TI_MIN = 0.04
 TI_MAX = 0.25
@@ -97,7 +96,7 @@ def load_turbine_from_yaml(yaml_path: Path):
     return turbine, meta
 
 
-# SITE MODEL (same as analysis)
+# SITE MODEL
 
 def make_site(cut_in, cut_out):
     wd_grid = np.arange(0, 360, 30.0)
@@ -128,8 +127,6 @@ def load_layout_from_python(module_name: str):
     layout_x = np.asarray(getattr(mod, "layout_x"), dtype=float)
     layout_y = np.asarray(getattr(mod, "layout_y"), dtype=float)
     return layout_x, layout_y
-
-
 
 # MAIN
 
@@ -162,7 +159,7 @@ def main():
     cut_out = meta["cut_out"]
     site = make_site(cut_in=cut_in, cut_out=cut_out)
 
-    # Load layout (python module)
+    # Load layout 
     layout_x, layout_y = load_layout_from_python(args.layout_module)
     n_turbines = len(layout_x)
     nameplate_capacity_MW = n_turbines * meta["rated_power_W"] / 1e6
